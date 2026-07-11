@@ -40,7 +40,7 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
     name: "",
     location: "",
     profileType: "individual",
-    householdSize: 1,
+    householdSize: 0,
     hasElderly: false,
     hasInfants: false,
     hasDisabled: false,
@@ -49,11 +49,11 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
   });
 
   useEffect(() => {
-    console.log("[MonsoonReady] ProfileForm: profileType changed", { profileType: profile.profileType, showHouseholdSize: profile.profileType === "family" || profile.profileType === "community" });
+    console.log("[MonsoonReady] ProfileForm: profileType changed", { profileType: profile.profileType });
   }, [profile.profileType]);
 
   useEffect(() => {
-    console.log("[MonsoonReady] ProfileForm: render state", { loading, hasName: !!profile.name, hasLocation: !!profile.location });
+    console.log("[MonsoonReady] ProfileForm: render state", { loading, hasName: !!profile.name, hasLocation: !!profile.location, householdSize: profile.householdSize });
   }, [loading, profile.name, profile.location]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -125,11 +125,7 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
               key={value}
               type="button"
               onClick={() =>
-                setProfile({
-                  ...profile,
-                  profileType: value,
-                  householdSize: value === "individual" ? 1 : profile.householdSize,
-                })
+                setProfile({ ...profile, profileType: value, householdSize: value === "individual" ? 1 : profile.householdSize })
               }
               className={`p-4 rounded-xl border text-left transition-all ${
                 profile.profileType === value
@@ -146,29 +142,31 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
         </div>
       </motion.div>
 
-      {(profile.profileType === "family" || profile.profileType === "community") && (
-        <motion.div
-          custom={3}
-          variants={fieldVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-2"
-        >
-          <label className="block text-sm font-medium text-blue-100">
-            Household Size{profile.profileType === "community" ? " (approx.)" : ""}
-          </label>
-          <input
-            type="number"
-            min={1}
-            max={500}
-            value={profile.householdSize}
-            onChange={(e) =>
-              setProfile({ ...profile, householdSize: Math.max(1, parseInt(e.target.value) || 1) })
-            }
-            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all"
-          />
-        </motion.div>
-      )}
+      <motion.div
+        custom={3}
+        variants={fieldVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-2"
+      >
+        <label className="block text-sm font-medium text-blue-100">
+          Total Household Members{profile.profileType === "community" ? " (approx.)" : ""}
+        </label>
+        <input
+          type="number"
+          min={0}
+          max={500}
+          disabled={profile.profileType === "individual"}
+          value={profile.profileType === "individual" ? 1 : profile.householdSize || ""}
+          onChange={(e) =>
+            setProfile({ ...profile, householdSize: Math.max(0, parseInt(e.target.value) || 0) })
+          }
+          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        {profile.householdSize < 1 && profile.profileType !== "individual" && (
+          <p className="text-red-300 text-xs mt-1">Please enter the number of household members.</p>
+        )}
+      </motion.div>
 
       <motion.div
         custom={4}
@@ -267,7 +265,7 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
         animate={loading ? { scale: [1, 1.02, 1] } : {}}
         transition={loading ? { repeat: Infinity, duration: 1.5 } : {}}
         type="submit"
-        disabled={loading || !profile.name || !profile.location}
+        disabled={loading || !profile.name || !profile.location || profile.householdSize < 1}
         className="w-full py-3.5 px-6 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         {loading ? "Generating Your Plan..." : "Generate My Preparedness Plan"}
