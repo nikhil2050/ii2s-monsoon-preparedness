@@ -1,101 +1,157 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import ProfileForm from "@/components/ProfileForm";
+import type { UserProfile } from "@/types";
+
+const DROP_COUNT = 50;
+
+function RainDrops() {
+  const drops = useMemo(() =>
+    Array.from({ length: DROP_COUNT }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 3}s`,
+      duration: `${1 + Math.random() * 1.5}s`,
+      height: `${30 + Math.random() * 50}px`,
+    })),
+  []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+      {drops.map((d) => (
+        <div
+          key={d.id}
+          className="rain-drop"
+          style={{
+            left: d.left,
+            animationDelay: d.delay,
+            animationDuration: d.duration,
+            height: d.height,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.3 },
+  },
+};
+
+const child = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleSubmit = async (profile: UserProfile) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/monsoon-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profile),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error ?? "Failed to generate plan");
+      }
+
+      sessionStorage.setItem("monsoonPlan", JSON.stringify(data.data));
+      sessionStorage.setItem("userProfile", JSON.stringify(profile));
+      router.push("/plan");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">
+      <RainDrops />
+
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/15 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-transparent" />
+
+      <div className="relative max-w-4xl mx-auto px-4 py-16 sm:py-20">
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+          className="text-center mb-12"
+        >
+          <motion.h1
+            variants={child}
+            className="text-5xl sm:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-cyan-400"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            MonsoonReady
+          </motion.h1>
+          <motion.p
+            variants={child}
+            className="mt-4 text-lg text-blue-200/80 max-w-xl mx-auto"
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+            Your personalised monsoon preparedness companion. Get tailored plans,
+            checklists, and real-time guidance — in your language.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <ProfileForm onSubmit={handleSubmit} loading={loading} />
+        </motion.div>
+
+        {error && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4 text-center text-red-300 bg-red-500/10 border border-red-500/20 rounded-xl p-3"
+          >
+            {error}
+          </motion.p>
+        )}
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+          className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          {[
+            { icon: "🌊", title: "Personalised Plans", desc: "Tailored to your location and needs" },
+            { icon: "✅", title: "Smart Checklists", desc: "Before, during, and after monsoon" },
+            { icon: "🤖", title: "Multilingual AI", desc: "Chat in your preferred language" },
+          ].map((feature) => (
+            <motion.div
+              key={feature.title}
+              variants={child}
+              className="text-center p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors"
+            >
+              <div className="text-3xl mb-3">{feature.icon}</div>
+              <h3 className="text-white font-semibold mb-1">{feature.title}</h3>
+              <p className="text-blue-200/60 text-sm">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </main>
   );
 }
