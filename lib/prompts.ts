@@ -1,5 +1,6 @@
 export const PREPAREDNESS_PROMPT = `You are a monsoon preparedness expert for India. Given a user profile, generate a personalized preparedness plan.
 
+Be concise. Reply only with valid JSON — no markdown, no commentary, no control characters.
 Respond in valid JSON with this exact structure:
 {
   "personalizedPlan": {
@@ -21,6 +22,7 @@ Respond in the user's chosen language (Hindi, Marathi, English, or other Indian 
 
 export const CHECKLIST_PROMPT = `You are a disaster management specialist. Given a monsoon phase and user profile, generate an emergency checklist.
 
+Be concise. Reply only with valid JSON — no markdown, no commentary, no control characters.
 Respond in valid JSON with this exact structure:
 {
   "items": [
@@ -37,6 +39,7 @@ Provide 8-12 actionable items. Mark truly time-sensitive or life-saving items as
 
 export const ADVISORY_PROMPT = `You are a weather safety advisor for India. Given travel details, generate a monsoon travel advisory.
 
+Be concise. Reply only with valid JSON — no markdown, no commentary, no control characters.
 Respond in valid JSON with this exact structure:
 {
   "safeToTravel": true/false,
@@ -77,7 +80,7 @@ export function buildPlanPrompt(
   const weatherBlock = weatherSummary
     ? `\n\nLive Weather Data:\n${weatherSummary}`
     : "";
-  return `User Profile:\n${JSON.stringify(profile, null, 2)}${weatherBlock}\n\nGenerate a personalized monsoon preparedness plan in ${profile.language}. Based on the weather data, give specific, location-aware advice.`;
+  return `User Profile:\n${JSON.stringify(profile, null, 2)}${weatherBlock}\n\nGenerate a concise, personalized monsoon preparedness plan in ${profile.language}. Based on the weather data, give specific, location-aware advice. Reply only with valid JSON — no control characters.`;
 }
 
 export function buildChecklistPrompt(phase: string, profile: {
@@ -87,9 +90,9 @@ export function buildChecklistPrompt(phase: string, profile: {
   hasInfants: boolean;
   hasDisabled: boolean;
 }): string {
-  return `Phase: "${phase}"\nUser Profile:\n${JSON.stringify(profile, null, 2)}\n\nGenerate an emergency checklist for this phase.`;
+  return `Phase: "${phase}"\nUser Profile:\n${JSON.stringify(profile, null, 2)}\n\nGenerate a concise emergency checklist for this phase. Reply only with valid JSON — no control characters.`;
 }
 
 export function buildAdvisoryPrompt(origin: string, destination: string, date: string): string {
-  return `Origin: ${origin}\nDestination: ${destination}\nDate: ${date}\n\nGenerate a monsoon travel advisory.`;
+  return `Origin: ${origin}\nDestination: ${destination}\nDate: ${date}\n\nGenerate a concise monsoon travel advisory. Reply only with valid JSON — no control characters.`;
 }
