@@ -1,3 +1,5 @@
+import JSON5 from "json5";
+
 export function parseJSON<T>(raw: string): T {
   const trimmed = raw.trim();
 
@@ -6,5 +8,10 @@ export function parseJSON<T>(raw: string): T {
 
   clean = clean.replace(/[\u0000-\u001F]/g, "");
 
-  return JSON.parse(clean) as T;
+  try {
+    return JSON5.parse(clean) as T;
+  } catch (err) {
+    console.error("parseJSON failed on:", clean.slice(0, 500));
+    throw err;
+  }
 }
