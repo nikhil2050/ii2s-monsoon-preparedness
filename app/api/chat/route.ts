@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callAI } from "@/lib/openrouter";
+import { callAI } from "@/lib/ai";
 import { CHAT_SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRateLimit } from "@/lib/rateLimiter";
 import type { ChatMessage } from "@/types";

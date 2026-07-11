@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callAI } from "@/lib/openrouter";
+import { callAI } from "@/lib/ai";
 import { ADVISORY_PROMPT, buildAdvisoryPrompt } from "@/lib/prompts";
 import { parseJSON } from "@/lib/utils";
 import { checkRateLimit } from "@/lib/rateLimiter";

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callAI } from "@/lib/openrouter";
+import { callAI } from "@/lib/ai";
 import { CHECKLIST_PROMPT, buildChecklistPrompt } from "@/lib/prompts";
 import { parseJSON } from "@/lib/utils";
 import { checkRateLimit } from "@/lib/rateLimiter";
