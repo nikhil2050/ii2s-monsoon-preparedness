@@ -64,7 +64,12 @@ export default function WeatherSidebar({ forecast }: WeatherSidebarProps) {
           </div>
         </div>
 
-        <div className="flex lg:flex-col gap-2 overflow-x-auto pb-1">
+        <style>{`
+          .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        `}</style>
+        <div className="flex lg:flex-col gap-2 overflow-x-auto pb-1 custom-scrollbar">
           {forecast.forecast.map((day) => (
             <motion.div
               key={day.date}

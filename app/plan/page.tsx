@@ -59,7 +59,7 @@ export default function PlanPage() {
       <WeatherBackground condition={dominantCondition} city={profile.location} />
 
       <div className="relative z-10">
-        <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between mb-8">
             <button
               onClick={() => router.push("/")}
