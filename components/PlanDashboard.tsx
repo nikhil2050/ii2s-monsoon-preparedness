@@ -58,7 +58,7 @@ export default function PlanDashboard({ plan, location, profile }: PlanDashboard
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20"
+        className="bg-gray-900/85 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20"
       >
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -137,7 +137,7 @@ export default function PlanDashboard({ plan, location, profile }: PlanDashboard
             animate="center"
             exit="exit"
             transition={{ duration: 0.25 }}
-            className="mt-6 p-6 bg-white/5 rounded-xl border border-white/10"
+            className="mt-6 p-6 bg-gray-900/85 backdrop-blur-sm rounded-xl border border-white/10"
           >
             <h3 className="text-xl font-semibold text-white mb-4 capitalize">
               {activePhase === "before" ? "Before" : activePhase === "during" ? "During" : "After"} Monsoon

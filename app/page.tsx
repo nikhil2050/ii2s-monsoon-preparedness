@@ -77,8 +77,9 @@ export default function Home() {
         throw new Error(data.error ?? "Failed to generate plan");
       }
 
-      console.log("[MonsoonReady] Home: API success, writing to sessionStorage");
+      console.log("[MonsoonReady] Home: API success, writing to sessionStorage", { hasWeather: !!data.weather });
       sessionStorage.setItem("monsoonPlan", JSON.stringify(data.data));
+      sessionStorage.setItem("monsoonForecast", JSON.stringify(data.weather));
       sessionStorage.setItem("userProfile", JSON.stringify(profile));
       console.log("[MonsoonReady] Home: redirecting to /plan");
       router.push("/plan");

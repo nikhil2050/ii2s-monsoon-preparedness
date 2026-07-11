@@ -17,7 +17,7 @@ const PHASES: { key: MonsoonPhase; label: string; emoji: string }[] = [
 export default function PhaseToggle({ activePhase, onPhaseChange }: PhaseToggleProps) {
   console.log("[MonsoonReady] PhaseToggle: render", { activePhase });
   return (
-    <div className="flex gap-2 p-1.5 bg-white/5 rounded-xl border border-white/10">
+    <div className="flex gap-2 p-1.5 bg-gray-900/85 backdrop-blur-sm rounded-xl border border-white/10">
       {PHASES.map(({ key, label, emoji }) => (
         <button
           key={key}

@@ -139,8 +139,8 @@ export default function ChecklistCard({ phase, profile }: ChecklistCardProps) {
               onClick={() => toggleItem(i)}
               className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all ${
                 item.done
-                  ? "bg-white/5 border-white/10 opacity-60"
-                  : "bg-white/5 border-white/10 hover:bg-white/10"
+                  ? "bg-gray-900/85 border-white/10 opacity-60"
+                  : "bg-gray-900/85 border-white/10 hover:bg-white/10"
               }`}
             >
               <span

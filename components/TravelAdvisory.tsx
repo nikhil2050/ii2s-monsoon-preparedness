@@ -62,7 +62,7 @@ export default function TravelAdvisory() {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/20">
+    <div className="bg-gray-900/85 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
       <h2 className="text-xl font-bold text-white mb-2">Travel Advisory</h2>
       <p className="text-blue-100 text-sm mb-6">
         Check if it&apos;s safe to travel between two locations.
