@@ -13,8 +13,12 @@ export default function TravelAdvisory() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!origin || !destination || !date) return;
+    if (!origin || !destination || !date) {
+      console.log("[MonsoonReady] TravelAdvisory: submit blocked - missing fields", { origin, destination, date });
+      return;
+    }
 
+    console.log("[MonsoonReady] TravelAdvisory: submit start", { origin, destination, date });
     setLoading(true);
     try {
       const res = await fetch("/api/advisory", {
@@ -23,9 +27,13 @@ export default function TravelAdvisory() {
         body: JSON.stringify({ origin, destination, date }),
       });
       const data = await res.json();
-      if (data.success) setResult(data.data);
-    } catch {
-      // silently fail
+      console.log("[MonsoonReady] TravelAdvisory: API response", { status: res.status, success: data.success });
+      if (data.success) {
+        console.log("[MonsoonReady] TravelAdvisory: advisory result", { safeToTravel: data.data?.safeToTravel, riskLevel: data.data?.riskLevel });
+        setResult(data.data);
+      }
+    } catch (err) {
+      console.error("[MonsoonReady] TravelAdvisory: API error (silent fail)", err);
     } finally {
       setLoading(false);
     }
@@ -38,6 +46,8 @@ export default function TravelAdvisory() {
         ? "AVOID"
         : "CAUTION"
     : null;
+
+  console.log("[MonsoonReady] TravelAdvisory: render", { loading, hasResult: !!result, status, riskLevel: result?.riskLevel });
 
   const STATUS_STYLES: Record<string, string> = {
     GO: "bg-green-600/80 border-green-400 shadow-green-600/20",

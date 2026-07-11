@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import type { UserProfile } from "@/types";
 
@@ -48,8 +48,17 @@ export default function ProfileForm({ onSubmit, loading }: ProfileFormProps) {
     alertLevel: "informational",
   });
 
+  useEffect(() => {
+    console.log("[MonsoonReady] ProfileForm: profileType changed", { profileType: profile.profileType, showHouseholdSize: profile.profileType === "family" || profile.profileType === "community" });
+  }, [profile.profileType]);
+
+  useEffect(() => {
+    console.log("[MonsoonReady] ProfileForm: render state", { loading, hasName: !!profile.name, hasLocation: !!profile.location });
+  }, [loading, profile.name, profile.location]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[MonsoonReady] ProfileForm: submit", { name: profile.name, location: profile.location, profileType: profile.profileType, language: profile.language });
     onSubmit(profile);
   };
 

@@ -68,6 +68,7 @@ export default function ChecklistCard({ phase, profile }: ChecklistCardProps) {
   const [loading, setLoading] = useState(false);
 
   const fetchChecklist = useCallback(async () => {
+    console.log("[MonsoonReady] ChecklistCard: fetchChecklist start", { phase });
     setLoading(true);
     try {
       const res = await fetch("/api/checklist", {
@@ -75,14 +76,20 @@ export default function ChecklistCard({ phase, profile }: ChecklistCardProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phase, profile }),
       });
+      console.log("[MonsoonReady] ChecklistCard: API response", { status: res.status, ok: res.ok });
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.data?.items) {
+          console.log("[MonsoonReady] ChecklistCard: using API items", { count: data.data.items.length });
           setItems(data.data.items);
+        } else {
+          console.log("[MonsoonReady] ChecklistCard: API returned no items, using fallback");
         }
+      } else {
+        console.log("[MonsoonReady] ChecklistCard: API not ok, using fallback");
       }
-    } catch {
-      // use fallback
+    } catch (err) {
+      console.error("[MonsoonReady] ChecklistCard: fetch error, using fallback", err);
     } finally {
       setLoading(false);
     }
@@ -93,6 +100,7 @@ export default function ChecklistCard({ phase, profile }: ChecklistCardProps) {
   }, [fetchChecklist]);
 
   const toggleItem = (index: number) => {
+    console.log("[MonsoonReady] ChecklistCard: toggleItem", { index, wasDone: items[index]?.done, task: items[index]?.task?.slice(0, 40) });
     setItems((prev) =>
       prev.map((item, i) => (i === index ? { ...item, done: !item.done } : item))
     );
@@ -100,6 +108,8 @@ export default function ChecklistCard({ phase, profile }: ChecklistCardProps) {
 
   const doneCount = items.filter((i) => i.done).length;
   const progress = items.length > 0 ? doneCount / items.length : 0;
+
+  console.log("[MonsoonReady] ChecklistCard: render", { phase, itemCount: items.length, doneCount, progress: Math.round(progress * 100) });
 
   return (
     <div className="space-y-4">

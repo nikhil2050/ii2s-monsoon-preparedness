@@ -19,7 +19,9 @@ function detectLanguage(text: string): string {
   if (devanagari.test(text)) {
     const marathiWords = ["आहे", "नाही", "का", "हो", "मी", "तू", "आम्ही"];
     const hasMarathi = marathiWords.some((w) => text.includes(w));
-    return hasMarathi ? "MR" : "HI";
+    const detected = hasMarathi ? "MR" : "HI";
+    console.log("[MonsoonReady] ChatWidget: detected devanagari script", { detected, textLength: text.length });
+    return detected;
   }
   return "EN";
 }
@@ -27,6 +29,8 @@ function detectLanguage(text: string): string {
 export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
   const [open, setOpen] = useState(false);
   const [detectedLang, setDetectedLang] = useState(LANG_MAP[language] ?? "EN");
+
+  console.log("[MonsoonReady] ChatWidget: mounted", { language, detectedLang });
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "0",
@@ -46,12 +50,17 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
 
   useEffect(() => {
     if (input.trim()) {
-      setDetectedLang(detectLanguage(input));
+      const lang = detectLanguage(input);
+      console.log("[MonsoonReady] ChatWidget: input language detection", { detected: lang, input: input.trim().slice(0, 50) });
+      setDetectedLang(lang);
     }
   }, [input]);
 
   const sendMessage = async () => {
-    if (!input.trim() || loading) return;
+    if (!input.trim() || loading) {
+      console.log("[MonsoonReady] ChatWidget: sendMessage blocked", { hasInput: !!input.trim(), loading });
+      return;
+    }
 
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
@@ -59,6 +68,8 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
       content: input.trim(),
       timestamp: new Date().toISOString(),
     };
+
+    console.log("[MonsoonReady] ChatWidget: sendMessage start", { content: userMsg.content.slice(0, 60), historyCount: messages.length });
 
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -75,6 +86,8 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
         }),
       });
 
+      console.log("[MonsoonReady] ChatWidget: API response", { status: res.status, ok: res.ok });
+
       if (!res.ok) throw new Error("Failed to get response");
 
       const data = await res.json();
@@ -86,8 +99,10 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
         timestamp: new Date().toISOString(),
       };
 
+      console.log("[MonsoonReady] ChatWidget: assistant reply received", { contentLength: assistantMsg.content.length });
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch {
+    } catch (err) {
+      console.error("[MonsoonReady] ChatWidget: sendMessage error", err);
       setMessages((prev) => [
         ...prev,
         {
@@ -107,7 +122,7 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => setOpen(true)}
+        onClick={() => { console.log("[MonsoonReady] ChatWidget: opened"); setOpen(true); }}
         className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-xl flex items-center justify-center text-white text-2xl z-50 hover:shadow-2xl transition-shadow"
       >
         💬
@@ -129,7 +144,7 @@ export default function ChatWidget({ language = "English" }: ChatWidgetProps) {
                 </span>
               </div>
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => { console.log("[MonsoonReady] ChatWidget: closed"); setOpen(false); }}
                 className="text-white/60 hover:text-white transition-colors"
               >
                 ✕

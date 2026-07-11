@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { PreparednessPlan, MonsoonPhase } from "@/types";
 import PhaseToggle from "./PhaseToggle";
 import ChecklistCard from "./ChecklistCard";
@@ -44,6 +44,12 @@ const tabVariants = {
 export default function PlanDashboard({ plan, location, profile }: PlanDashboardProps) {
   const [activePhase, setActivePhase] = useState<MonsoonPhase>("before");
   const phaseActions = plan[PHASE_MAP[activePhase]] as string[] | undefined;
+
+  useEffect(() => {
+    console.log("[MonsoonReady] PlanDashboard: phase changed", { phase: activePhase, hasActions: !!(phaseActions && phaseActions.length > 0), count: phaseActions?.length });
+  }, [activePhase, phaseActions]);
+
+  console.log("[MonsoonReady] PlanDashboard: render", { activePhase, location, riskLevel: plan.estimatedRisk, actionsCount: phaseActions?.length });
 
   return (
     <div className="space-y-8">
@@ -121,7 +127,7 @@ export default function PlanDashboard({ plan, location, profile }: PlanDashboard
           </motion.ul>
         </div>
 
-        <PhaseToggle activePhase={activePhase} onPhaseChange={setActivePhase} />
+        <PhaseToggle activePhase={activePhase} onPhaseChange={(phase) => { console.log("[MonsoonReady] PlanDashboard: phase change", { from: activePhase, to: phase }); setActivePhase(phase); }} />
 
         <AnimatePresence mode="wait">
           <motion.div

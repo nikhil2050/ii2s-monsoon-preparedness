@@ -15,12 +15,13 @@ const PHASES: { key: MonsoonPhase; label: string; emoji: string }[] = [
 ];
 
 export default function PhaseToggle({ activePhase, onPhaseChange }: PhaseToggleProps) {
+  console.log("[MonsoonReady] PhaseToggle: render", { activePhase });
   return (
     <div className="flex gap-2 p-1.5 bg-white/5 rounded-xl border border-white/10">
       {PHASES.map(({ key, label, emoji }) => (
         <button
           key={key}
-          onClick={() => onPhaseChange(key)}
+          onClick={() => { console.log("[MonsoonReady] PhaseToggle: click", { key, label }); onPhaseChange(key); }}
           className="relative flex-1 py-2.5 px-4 text-sm font-medium rounded-lg transition-colors"
         >
           {activePhase === key && (

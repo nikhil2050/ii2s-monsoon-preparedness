@@ -16,9 +16,15 @@ const CONTACTS = [
 export default function AlertBanner({ riskLevel }: AlertBannerProps) {
   const [dismissed, setDismissed] = useState(false);
 
-  if (dismissed) return null;
+  console.log("[MonsoonReady] AlertBanner: render", { riskLevel, dismissed });
+
+  if (dismissed) {
+    console.log("[MonsoonReady] AlertBanner: dismissed, returning null");
+    return null;
+  }
 
   const isSevere = riskLevel === "high" || riskLevel === "extreme";
+  console.log("[MonsoonReady] AlertBanner: conditional branch", { isSevere, riskLevel });
 
   return (
     <AnimatePresence>
@@ -44,7 +50,7 @@ export default function AlertBanner({ riskLevel }: AlertBannerProps) {
                 </p>
               </div>
               <button
-                onClick={() => setDismissed(true)}
+                onClick={() => { console.log("[MonsoonReady] AlertBanner: dismissed severe banner"); setDismissed(true); }}
                 className="ml-auto text-white/60 hover:text-white shrink-0"
               >
                 ✕
@@ -72,7 +78,7 @@ export default function AlertBanner({ riskLevel }: AlertBannerProps) {
                 Stay aware of local weather updates.
               </p>
               <button
-                onClick={() => setDismissed(true)}
+                onClick={() => { console.log("[MonsoonReady] AlertBanner: dismissed info banner"); setDismissed(true); }}
                 className="text-white/60 hover:text-white shrink-0"
               >
                 ✕

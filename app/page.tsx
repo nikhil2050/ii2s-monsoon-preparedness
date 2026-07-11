@@ -9,15 +9,18 @@ import type { UserProfile } from "@/types";
 const DROP_COUNT = 50;
 
 function RainDrops() {
-  const drops = useMemo(() =>
-    Array.from({ length: DROP_COUNT }, (_, i) => ({
+  console.log("[MonsoonReady] RainDrops: mounted", { dropCount: DROP_COUNT });
+  const drops = useMemo(() => {
+    const arr = Array.from({ length: DROP_COUNT }, (_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
       delay: `${Math.random() * 3}s`,
       duration: `${1 + Math.random() * 1.5}s`,
       height: `${30 + Math.random() * 50}px`,
-    })),
-  []);
+    }));
+    console.log("[MonsoonReady] RainDrops: generated drops", { count: arr.length });
+    return arr;
+  }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
@@ -56,6 +59,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (profile: UserProfile) => {
+    console.log("[MonsoonReady] Home: handleSubmit start", { location: profile.location, profileType: profile.profileType });
     setLoading(true);
     setError("");
 
@@ -65,6 +69,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
       });
+      console.log("[MonsoonReady] Home: API response received", { status: res.status });
 
       const data = await res.json();
 
@@ -72,15 +77,21 @@ export default function Home() {
         throw new Error(data.error ?? "Failed to generate plan");
       }
 
+      console.log("[MonsoonReady] Home: API success, writing to sessionStorage");
       sessionStorage.setItem("monsoonPlan", JSON.stringify(data.data));
       sessionStorage.setItem("userProfile", JSON.stringify(profile));
+      console.log("[MonsoonReady] Home: redirecting to /plan");
       router.push("/plan");
     } catch (err) {
+      console.error("[MonsoonReady] Home: handleSubmit error", err);
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
+      console.log("[MonsoonReady] Home: loading set to false");
     }
   };
+
+  console.log("[MonsoonReady] Home: rendered", { loading, hasError: !!error });
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">

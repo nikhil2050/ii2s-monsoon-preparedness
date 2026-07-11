@@ -14,7 +14,10 @@ export default function PlanPage() {
     const storedPlan = sessionStorage.getItem("monsoonPlan");
     const storedProfile = sessionStorage.getItem("userProfile");
 
+    console.log("[MonsoonReady] PlanPage: sessionStorage read", { hasPlan: !!storedPlan, hasProfile: !!storedProfile });
+
     if (!storedPlan || !storedProfile) {
+      console.log("[MonsoonReady] PlanPage: missing data, redirecting to /");
       router.push("/");
       return;
     }
@@ -22,6 +25,8 @@ export default function PlanPage() {
     setPlan(JSON.parse(storedPlan));
     setProfile(JSON.parse(storedProfile));
   }, [router]);
+
+  console.log("[MonsoonReady] PlanPage: render state", { hasPlan: !!plan, hasProfile: !!profile });
 
   if (!plan || !profile) {
     return (
