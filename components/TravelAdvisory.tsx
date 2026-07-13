@@ -70,8 +70,9 @@ export default function TravelAdvisory() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-blue-200">Origin</label>
+          <label htmlFor="origin" className="text-xs font-medium text-blue-200">Origin</label>
           <input
+            id="origin"
             type="text"
             required
             placeholder="e.g. Mumbai"
@@ -81,8 +82,9 @@ export default function TravelAdvisory() {
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-blue-200">Destination</label>
+          <label htmlFor="destination" className="text-xs font-medium text-blue-200">Destination</label>
           <input
+            id="destination"
             type="text"
             required
             placeholder="e.g. Pune"
@@ -92,8 +94,9 @@ export default function TravelAdvisory() {
           />
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-blue-200">Date</label>
+          <label htmlFor="travel-date" className="text-xs font-medium text-blue-200">Date</label>
           <input
+            id="travel-date"
             type="date"
             required
             value={date}

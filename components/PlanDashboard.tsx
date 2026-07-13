@@ -80,7 +80,7 @@ export default function PlanDashboard({ plan, location, profile }: PlanDashboard
         <p className="text-white/80 mb-6 leading-relaxed">{plan.personalizedPlan.summary}</p>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-3">Weather-Aware Tips</h3>
+          <h2 className="text-lg font-semibold text-white mb-3">Weather-Aware Tips</h2>
           <motion.ul
             initial="hidden"
             animate="visible"
@@ -104,7 +104,7 @@ export default function PlanDashboard({ plan, location, profile }: PlanDashboard
         </div>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-3">Safety Recommendations</h3>
+          <h2 className="text-lg font-semibold text-white mb-3">Safety Recommendations</h2>
           <motion.ul
             initial="hidden"
             animate="visible"
